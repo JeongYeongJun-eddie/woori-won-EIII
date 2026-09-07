@@ -5,8 +5,9 @@ import Step3Confirm from "./transfer/Step3Confirm";
 import Step4Result from "./transfer/Step4Result";
 import TransferBottomNav from "./transfer/TransferBottomNav";
 import { API_ENDPOINTS } from '../constants/api';
+import './transfer/TransferScreen.css'; // 👈 한 번만 import
 
-export default function TransferPage({ onFinishHome }) {
+export default function TransferFrame({ onFinishHome }) {
     // 1. 단계 제어 상태 (1: 계좌선택, 2: 금액입력, 3: 이체확인, 4: 이체완료)
     const [step, setStep] = useState(1);
 
