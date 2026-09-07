@@ -29,6 +29,20 @@ export async function getTransactions(params = {}) {
   const response = await fetch(`${API_BASE_URL}/transactions${queryString}`)
   if (!response.ok) {
     throw new Error('거래내역을 불러오는데 실패했습니다.')
+export const API_ENDPOINTS = {
+  ACCOUNTS: `${API_BASE}/api/accounts`,
+  LOOKUP: `${API_BASE}/api/transfer/lookup`,
+  TRANSFERS: `${API_BASE}/api/transfers`,
+};
+
+async function apiRequest(path, options = {}) {
+  const res = await fetch(API_BASE + path, {
+    headers: { 'Content-Type': 'application/json' },
+    ...options,
+  })
+  const data = await res.json().catch(() => null)
+  if (!res.ok) {
+    throw new Error(data?.message || `요청 실패 (${res.status})`)
   }
   return response.json()
 }

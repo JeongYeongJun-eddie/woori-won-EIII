@@ -15,19 +15,27 @@ woori-won-EIII/
 └── src/
     ├── main.jsx
     ├── App.jsx
-    ├── App.css
     ├── index.css
     ├── assets/
     │   ├── hero.png
     │   ├── react.svg
     │   └── vite.svg
     ├── components/
-    │   └── ui/            # 공용 UI 컴포넌트 (버튼, 모달 등)
-    ├── constants/          # api.js 등 상수/설정
-    └── layouts/            # 공통 레이아웃 컴포넌트
+    │   ├── HomeScreen.jsx / .css   # 홈 화면
+    │   └── ui/                     # 공용 UI 컴포넌트 (아직 빈 폴더)
+    ├── constants/
+    │   └── api.js          # API 연동용 fetch 래퍼 (아직 어디서도 미사용, 담당 팀원 작업 예정)
+    └── layouts/             # 여러 화면이 공유하는 레이아웃
+        ├── PhoneFrame.jsx / .css   # 폰 프레임 (반응형 컨테이너)
+        ├── StatusBar.jsx / .css    # 상태바 (장식용)
+        ├── AppHeader.jsx / .css    # 상단 헤더
+        ├── BottomNav.jsx / .css    # 하단 탭바
+        └── Toast.jsx / .css        # 범위 밖 안내 토스트
 ```
 
-`components/ui`, `constants`, `layouts`는 아직 빈 폴더라 Git 추적용 `.gitkeep`을 넣어둔 상태입니다.
+CSS는 **컴포넌트별로 옆에 나란히 두는 방식(co-located)**을 씁니다 — `HomeScreen.jsx` 옆에 `HomeScreen.css`, `Toast.jsx` 옆에 `Toast.css`. `styles/` 폴더에 몰아두는 방식은 안 씁니다. (컴포넌트 지울 때 CSS도 같이 눈에 띄어서 고아 파일이 안 남고, import 경로도 짧아지기 때문 — 자세한 논의는 팀 채널 참고)
+
+`components/ui`는 아직 실제로 빈 폴더라 Git 추적용 `.gitkeep`이 들어있습니다. `constants`, `layouts`는 이제 실제 파일이 있어서 `.gitkeep`을 제거했습니다.
 
 ## 프로젝트 생성 명령어 (참고용, 이미 완료됨)
 
@@ -35,7 +43,7 @@ woori-won-EIII/
 npm create vite@latest . -- --template react
 npm install
 mkdir -p src/components/ui src/constants src/layouts
-touch src/components/ui/.gitkeep src/constants/.gitkeep src/layouts/.gitkeep
+touch src/components/ui/.gitkeep   # constants, layouts는 이제 실제 파일이 있어 .gitkeep 불필요
 ```
 
 ## GitHub 저장소 정보
