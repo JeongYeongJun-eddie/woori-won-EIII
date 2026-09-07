@@ -2,6 +2,7 @@ import { useState } from 'react'
 import HomeScreen from './components/HomeScreen'
 import PhoneFrame from './layouts/PhoneFrame'
 import TransferFrame from './components/TransferScreen'
+import TransactionPage from './components/history/TransactionPage'
 
 const OUT_OF_SCOPE_MESSAGES = {
   product: '상품 화면은 이번 실습 범위 밖입니다',
@@ -26,20 +27,16 @@ function App() {
     <PhoneFrame activeTab={activeTab} onNavigate={handleAction} toast={toast}>
       {activeTab === 'home' && (
         <HomeScreen onQuickMenuSelect={handleAction} />
-<<<<<<< HEAD
-      ) : activeTab === 'history' ? (
-        <TransactionPage />
-      ) : (
-        <main style={{ padding: '80px 20px', textAlign: 'center', color: '#6b7280' }}>
-          <p>이 화면은 담당 팀원 브랜치에서 아직 작업 중입니다.</p>
-        </main>
-=======
       )}
 
-      {/* 2. 이체 화면 (이체 완료 시 다시 홈 탭으로 복귀) */}
+      {activeTab === 'history' && (
+        <TransactionPage />
+      )}
+
       {activeTab === 'transfer' && (
-        <TransferFrame onFinishHome={() => setActiveTab('home')} />
->>>>>>> origin/main
+        <TransferFrame
+          onFinishHome={() => setActiveTab('home')}
+        />
       )}
 
 
