@@ -3,42 +3,79 @@ const TransactionItem = ({
   account,
   onClick,
 }) => {
-  const isDeposit = transaction.type === "in";
 
-  const statusText =
-    transaction.status === "done"
-      ? "완료"
-      : "처리중";
+  const isDeposit = transaction.type === "in";
 
   return (
     <div
-      onClick={onClick}
       className="transaction-item"
+      onClick={onClick}
     >
-      <div>
-        <strong>
+
+      <div
+        className={
+          isDeposit
+            ? "transaction-icon deposit"
+            : "transaction-icon withdraw"
+        }
+      >
+        {isDeposit ? "⬇️" : "⬆️"}
+      </div>
+
+      <div className="transaction-info">
+
+        <div className="transaction-title">
           {transaction.desc}
-        </strong>
+        </div>
 
-        <p>
-          {transaction.time}
-          {" · "}
-          {account?.nickname}
-          {" · "}
-          {statusText}
-        </p>
+        <div className="transaction-sub">
+
+          <span>
+            {transaction.time}
+            {account?.nickname &&
+              ` · ${account.nickname}`}
+          </span>
+
+          <span
+            className={
+              transaction.status === "processing"
+                ? "transaction-status processing"
+                : "transaction-status"
+            }
+          >
+            {transaction.status === "processing"
+              ? "처리중"
+              : "완료"}
+          </span>
+
+        </div>
+
       </div>
 
-      <div>
-        <strong>
+      <div className="transaction-money">
+
+        <strong
+          className={
+            isDeposit
+              ? "amount deposit"
+              : "amount withdraw"
+          }
+        >
           {isDeposit ? "+" : "-"}
-          {transaction.amount.toLocaleString()}원
+          {Math.abs(transaction.amount).toLocaleString()}원
         </strong>
 
-        <p>
-          잔액 {transaction.balanceAfter.toLocaleString()}원
-        </p>
+         <span className="balance">
+          잔액{" "}
+          {transaction.balanceAfter !== undefined
+            ? transaction.balanceAfter.toLocaleString()
+            : "0"}
+          원
+        </span>
+
+
       </div>
+
     </div>
   );
 };

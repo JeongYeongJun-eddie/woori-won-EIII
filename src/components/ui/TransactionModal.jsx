@@ -1,117 +1,114 @@
-import { useEffect, useState } from "react";
-
-const API_URL = "http://localhost:4000/api";
-
 const TransactionModal = ({
   transactionId,
+  transactions,
   accounts,
   onClose,
 }) => {
-  const [transaction, setTransaction] = useState(null);
-  const [error, setError] = useState(null);
 
-  useEffect(() => {
-    console.log("모달 렌더링 transactionId:", transactionId);
+  const transaction = transactions.find(
+    tx => tx.id === transactionId
+  );
 
-    fetch(`${API_URL}/transactions/${transactionId}`)
-      .then(response => {
-        console.log("상세 API 응답 상태:", response.status);
+  if (!transaction) {
+    return null;
+  }
 
-        if (!response.ok) {
-          throw new Error("거래 상세 조회 실패");
-        }
-
-        return response.json();
-      })
-      .then(data => {
-        console.log("상세 데이터:", data);
-        setTransaction(data);
-      })
-      .catch(error => {
-        console.error("상세 API 에러:", error);
-        setError(error.message);
-      });
-
-  }, [transactionId]);
-
-  const account = transaction
-    ? accounts.find(
-        account => account.id === transaction.accountId
-      )
-    : null;
+  const account = accounts.find(
+    account =>
+      account.id === transaction.accountId
+  );
 
   const isDeposit =
-    transaction?.type === "in";
-
-  const statusText =
-    transaction?.status === "done"
-      ? "완료"
-      : "처리중";
+    transaction.type === "in";
 
   return (
     <div
       className="modal-overlay"
       onClick={onClose}
     >
+
       <div
-        className="modal-content"
-        onClick={event => event.stopPropagation()}
+        className="transaction-modal"
+        onClick={event =>
+          event.stopPropagation()
+        }
       >
-        {!transaction && !error && (
-          <p>거래 상세 조회 중...</p>
-        )}
 
-        {error && (
-          <p>{error}</p>
-        )}
+        <div className="modal-handle" />
 
-        {transaction && (
-          <>
-            <h2>{transaction.desc}</h2>
+        <h2 className="modal-title">
+          {transaction.title}
+        </h2>
 
-            <h1>
-              {isDeposit ? "+" : "-"}
-              {transaction.amount.toLocaleString()}원
-            </h1>
+        <div
+          className={
+            isDeposit
+              ? "modal-amount deposit"
+              : "modal-amount withdraw"
+          }
+        >
+          {isDeposit ? "+" : "-"}
+          {Math.abs(
+            transaction.amount
+          ).toLocaleString()}원
+        </div>
 
-            <div>
-              <span>거래일시</span>
-              <strong>
-                {transaction.date} {transaction.time}
-              </strong>
-            </div>
+        <div className="modal-details">
 
-            <div>
-              <span>거래계좌</span>
-              <strong>
-                {account?.nickname}
-                {" "}
-                ({account?.accountNo})
-              </strong>
-            </div>
+          <div className="modal-row">
+            <span>거래일시</span>
 
-            <div>
-              <span>거래 후 잔액</span>
-              <strong>
-                {transaction.balanceAfter.toLocaleString()}원
-              </strong>
-            </div>
+            <strong>
+              {transaction.date}{" "}
+              {transaction.time}
+            </strong>
+          </div>
 
-            <div>
-              <span>상태</span>
-              <strong>{statusText}</strong>
-            </div>
+          <div className="modal-row">
+            <span>거래계좌</span>
 
-            <button>
-              이체확인증 저장
-            </button>
+            <strong>
+              {account?.nickname}
+              {account?.accountNumber &&
+                ` (${account.accountNumber})`}
+            </strong>
+          </div>
 
-            <button onClick={onClose}>
-              닫기
-            </button>
-          </>
-        )}
+          <div className="modal-row">
+            <span>거래 후 잔액</span>
+
+            <strong>
+              {transaction.balance !== undefined
+                ? `${transaction.balance.toLocaleString()}원`
+                : "-"}
+            </strong>
+          </div>
+
+          <div className="modal-row">
+            <span>상태</span>
+
+            <strong>
+              {transaction.status === "processing"
+                ? "처리중"
+                : "완료"}
+            </strong>
+          </div>
+
+        </div>
+
+        <button className="receipt-btn">
+          이체확인증 저장
+        </button>
+
+        <button
+          className="modal-close-btn"
+          onClick={onClose}
+        >
+          닫기
+        </button>
+
       </div>
+
     </div>
   );
 };

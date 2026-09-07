@@ -1,0 +1,414 @@
+.transaction-page {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 100%;
+  padding: 16px 20px 100px;
+  background: #ffffff;
+}
+
+
+/* 계좌 탭 */
+
+.account-tabs {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 4px 0 14px;
+  white-space: nowrap;
+}
+
+.account-tab {
+  flex-shrink: 0;
+  padding: 9px 16px;
+
+  border: 1px solid #e1e5ea;
+  border-radius: 22px;
+
+  background: #f7f8fa;
+
+  color: #25282d;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.account-tab.active {
+  background: #0070b8;
+  border-color: #0070b8;
+  color: #ffffff;
+}
+
+
+/* 거래 유형 필터 */
+
+.transaction-filter {
+  display: flex;
+  gap: 7px;
+
+  margin-top: 8px;
+  margin-bottom: 26px;
+}
+
+.filter-btn {
+  padding: 8px 17px;
+
+  border: 1px solid #e1e5ea;
+  border-radius: 20px;
+
+  background: #f7f8fa;
+
+  color: #343a40;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.filter-btn.active {
+  background: #0070b8;
+  border-color: #0070b8;
+  color: #ffffff;
+}
+
+
+/* 거래 목록 */
+
+.transaction-list {
+  width: 100%;
+}
+
+.transaction-section {
+  margin-bottom: 18px;
+}
+
+.transaction-date {
+  margin: 20px 0 8px;
+
+  font-size: 13px;
+  font-weight: 700;
+
+  color: #65758b;
+}
+
+
+/* 거래 한 건 */
+
+.transaction-item {
+  display: flex;
+  align-items: center;
+
+  width: 100%;
+  min-height: 76px;
+
+  padding: 10px 0;
+
+  border-bottom: 1px solid #e7eaf0;
+
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.transaction-item:hover {
+  background: #fafbfc;
+}
+
+
+/* 아이콘 */
+.transaction-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  width: 40px;
+  height: 40px;
+
+  margin-right: 12px;
+
+  border-radius: 12px;
+
+  background: #f3f7fb;
+
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.transaction-icon.deposit {
+  color: #2387e0;
+}
+
+.transaction-icon.withdraw {
+  color: #2387e0;
+}
+
+
+/* 거래 정보 */
+.transaction-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.transaction-title {
+  margin-bottom: 4px;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  font-size: 15px;
+  font-weight: 700;
+
+  color: #16191d;
+}
+
+.transaction-sub {
+  display: flex;
+  align-items: center;
+
+  gap: 6px;
+
+  font-size: 11px;
+  color: #6b7280;
+
+  white-space: nowrap;
+}
+
+
+/* 상태 */
+
+.transaction-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  padding: 2px 6px;
+
+  border-radius: 10px;
+
+  background: #e4f6ef;
+  color: #07885b;
+
+  font-size: 10px;
+  font-weight: 700;
+
+  line-height: 1.4;
+
+  white-space: nowrap;
+}
+
+.transaction-status.processing {
+  background: #fff2d9;
+  color: #d78100;
+}
+
+
+/* 금액 */
+.transaction-money {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+
+  flex-shrink: 0;
+
+  margin-left: 12px;
+}
+
+.amount {
+  font-size: 15px;
+  font-weight: 800;
+
+  line-height: 1.2;
+
+  white-space: nowrap;
+}
+
+.amount.deposit {
+  color: #0067a8;
+}
+
+.amount.withdraw {
+  color: #111827;
+}
+
+.balance {
+  margin-top: 4px;
+
+  font-size: 11px;
+  color: #697586;
+
+  line-height: 1.2;
+
+  white-space: nowrap;
+}
+
+
+/* 모달 배경 */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+
+  z-index: 1000;
+
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+
+  background: rgba(0, 0, 0, 0.42);
+}
+
+
+/* 하단 모달 */
+
+.transaction-modal {
+  box-sizing: border-box;
+
+  width: 100%;
+  max-width: 440px;
+
+  padding: 16px 24px 28px;
+
+  background: #ffffff;
+
+  border-radius: 26px 26px 0 0;
+
+  animation: modal-up 0.25s ease-out;
+}
+
+@keyframes modal-up {
+  from {
+    transform: translateY(100%);
+  }
+
+  to {
+    transform: translateY(0);
+  }
+}
+
+
+/* 모달 손잡이 */
+
+.modal-handle {
+  width: 40px;
+  height: 4px;
+
+  margin: 0 auto 24px;
+
+  border-radius: 10px;
+
+  background: #c7ccd2;
+}
+
+
+/* 모달 제목 */
+
+.modal-title {
+  margin: 0 0 4px;
+
+  font-size: 19px;
+  font-weight: 800;
+
+  color: #202124;
+}
+
+
+/* 모달 금액 */
+
+.modal-amount {
+  margin-bottom: 30px;
+
+  font-size: 30px;
+  font-weight: 800;
+}
+
+.modal-amount.deposit {
+  color: #0067a8;
+}
+
+.modal-amount.withdraw {
+  color: #111827;
+}
+
+
+/* 상세 정보 */
+
+.modal-details {
+  margin-bottom: 12px;
+}
+
+.modal-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  min-height: 44px;
+
+  border-bottom: 1px solid #e3e6ea;
+
+  font-size: 14px;
+}
+
+.modal-row span {
+  color: #7d8794;
+}
+
+.modal-row strong {
+  max-width: 70%;
+
+  text-align: right;
+
+  color: #262a2f;
+
+  font-size: 13px;
+  font-weight: 700;
+}
+
+
+/* 이체확인증 */
+
+.receipt-btn {
+  width: 100%;
+  height: 52px;
+
+  margin-top: 10px;
+
+  border: 1px solid #dfe3e8;
+  border-radius: 16px;
+
+  background: #ffffff;
+
+  color: #4c5159;
+
+  font-size: 15px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+
+/* 닫기 버튼 */
+
+.modal-close-btn {
+  width: 100%;
+  height: 52px;
+
+  margin-top: 18px;
+
+  border: none;
+  border-radius: 14px;
+
+  background: #f2f4f6;
+
+  color: #424750;
+
+  font-size: 16px;
+  font-weight: 700;
+
+  cursor: pointer;
+}

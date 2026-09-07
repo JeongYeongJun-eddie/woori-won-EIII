@@ -1,14 +1,17 @@
-
-//여기서 selectedAccountId는 가장 처음엔 ""로 설정되어 있음
 const AccountTabs = ({
   accounts,
   selectedAccountId,
   onSelectAccount,
 }) => {
   return (
-    <div>
+    <div className="account-tabs">
+
       <button
-      //onSelectAccount는 선택 계좌 상태 변경 함수
+        className={
+          selectedAccountId === ""
+            ? "account-tab active"
+            : "account-tab"
+        }
         onClick={() => onSelectAccount("")}
       >
         전체계좌
@@ -17,11 +20,17 @@ const AccountTabs = ({
       {accounts.map(account => (
         <button
           key={account.id}
+          className={
+            selectedAccountId === account.id
+              ? "account-tab active"
+              : "account-tab"
+          }
           onClick={() => onSelectAccount(account.id)}
         >
           {account.nickname}
         </button>
       ))}
+
     </div>
   );
 };
