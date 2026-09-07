@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { API_ENDPOINTS } from '../../constants/api';
 
 const Step1AccountSelect = ({ formData, onChange, accountList = [], isLoading = false }) => {
   // 자동 조회 상태 관리
@@ -27,7 +28,7 @@ const Step1AccountSelect = ({ formData, onChange, accountList = [], isLoading = 
           accountNo: toAccount.trim(),
         }).toString();
 
-        const res = await fetch(`http://localhost:4000/api/transfer/lookup?${query}`);
+        const res = await fetch(`${API_ENDPOINTS.LOOKUP}?${query}`);
 
         if (!res.ok) {
           const errorData = await res.json();
@@ -62,9 +63,7 @@ const Step1AccountSelect = ({ formData, onChange, accountList = [], isLoading = 
             onChange={(e) => onChange('fromAccount', e.target.value)}
             disabled={isLoading}
           >
-            <option value="">
-              {isLoading ? '계좌 목록을 불러오는 중...' : '계좌를 선택하세요'}
-            </option>
+
             {accountList.map((acc) => (
               <option key={acc.id} value={acc.id}>
                 {acc.nickname || acc.name} ({acc.accountNo}) - {acc.balance.toLocaleString()}원
