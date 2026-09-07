@@ -391,6 +391,54 @@
   cursor: pointer;
 }
 
+/* 이체확인증 버튼 영역 */
+.receipt-area {
+  position: relative;
+  width: 100%;
+}
+
+
+/* 이체확인증 저장 안내 팝업 */
+.receipt-toast {
+  position: absolute;
+
+  left: 50%;
+  bottom: 10px;
+
+  transform: translateX(-50%);
+
+  padding: 11px 18px;
+
+  border-radius: 22px;
+
+  background: #252a2f;
+  color: #ffffff;
+
+  font-size: 12px;
+  font-weight: 700;
+
+  white-space: nowrap;
+
+  z-index: 10;
+
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+
+  animation: receipt-toast-in 0.2s ease-out;
+}
+
+
+@keyframes receipt-toast-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 5px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
 
 /* 닫기 버튼 */
 
