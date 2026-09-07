@@ -108,10 +108,10 @@ const Step1AccountSelect = ({ formData, onChange, accountList = [], isLoading = 
         <div className="feedback-box">
           {isVerifying && <span className="feedback-msg info">예금주 조회 중...</span>}
           {!isVerifying && formData.toName && (
-            <span className="feedback-msg success">✓ 예금주: {formData.toName}님</span>
+            <span className="feedback-msg success">✓ 예금주 {formData.toName}님 확인됨</span>
           )}
           {!isVerifying && verifyError && (
-            <span className="feedback-msg error">✕ {verifyError}</span>
+            <span className="feedback-msg error">{verifyError}</span>
           )}
         </div>
       </div>

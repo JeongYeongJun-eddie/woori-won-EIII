@@ -8,8 +8,8 @@ export default function TransferBottomNav({
   isNextDisabled = false,
 }) {
   return (
-    <div className="transfer-bottom-nav">
-      {/* 1단계: 이전 버튼 없이 '다음'만 전체 너비로 노출 */}
+    <div className="transfer-bottom-nav col">
+      {/* 1단계: '다음' 버튼 하나만 노출 */}
       {step === 1 && (
         <button
           type="button"
@@ -21,16 +21,9 @@ export default function TransferBottomNav({
         </button>
       )}
 
-      {/* 2~3단계: [이전]과 [다음 / 이체하기] 2개 버튼 배치 */}
+      {/* 2~3단계: [다음 / 이체하기] 위에, [이전으로] 아래에 배치 */}
       {(step === 2 || step === 3) && (
         <>
-          <button
-            type="button"
-            onClick={onPrev}
-            className="btn-nav-prev"
-          >
-            이전
-          </button>
           <button
             type="button"
             onClick={onNext}
@@ -39,10 +32,17 @@ export default function TransferBottomNav({
           >
             {step === 3 ? '이체하기' : '다음'}
           </button>
+          <button
+            type="button"
+            onClick={onPrev}
+            className="btn-nav-outline"
+          >
+            이전으로
+          </button>
         </>
       )}
 
-      {/* 4단계: 완료 화면 전용 '홈으로' 버튼 */}
+      {/* 4단계: 완료 화면 */}
       {step === 4 && (
         <button
           type="button"

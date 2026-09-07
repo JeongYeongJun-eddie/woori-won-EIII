@@ -1,60 +1,64 @@
-import React from 'react'
+import React from 'react';
+
+// 계좌번호 마스킹 유틸 함수 (예: 1002-***-123456)
+function maskAccountNo(accountNo = '') {
+    const clean = accountNo.replace(/[^0-9]/g, '');
+    if (clean.length < 8) return accountNo;
+    const start = clean.slice(0, 4);
+    const end = clean.slice(-6);
+    return `${start}-***-${end}`;
+}
 
 const Step3Confirm = ({ formData, selectedAccount }) => {
-    // 계산 로직: 보낼 금액, 현재 잔액, 이체 후 예상 잔액 도출
     const transferAmount = Number(formData.amount) || 0;
-    const currentBalance = selectedAccount?.balance || 0;
-    const balanceAfterTransfer = currentBalance - transferAmount;
+    const maskedAcc = selectedAccount?.accountNo
+        ? maskAccountNo(selectedAccount.accountNo)
+        : '';
 
     return (
-        <div>
-            <div className="transferStep3">
-                <h2>이체 정보를 확인해주세요</h2>
-                <p>아래 내용으로 이체가 진행됩니다</p>
+        <div className="step3-container">
+            {/* 1. 상단 타이틀 */}
+            <header className="transfer-header">
+                <h2>이체 내용을 확인해주세요</h2>
+            </header>
 
-                {/* 1. 핵심 이체 금액 요약 카드 */}
-                <div style={{ margin: '20px 0', padding: '16px', border: '1px solid #eee', borderRadius: '8px' }}>
-                    <div style={{ fontSize: '14px', color: '#666' }}>보낼 금액</div>
-                    <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#2563eb', marginTop: '4px' }}>
-                        {transferAmount.toLocaleString()}원
-                    </div>
+            {/* 2. 확인 영수증 카드 */}
+            <div className="confirm-summary-card">
+                <div className="confirm-row">
+                    <span className="confirm-label">받는 분</span>
+                    <span className="confirm-value">{formData.toBank}</span>
                 </div>
 
-                {/* 2. 상세 이체 정보 목록 */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                    {/* 받는 분 정보 */}
-                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <span style={{ color: '#666' }}>받는 분</span>
-                        <span style={{ fontWeight: 'bold' }}>{formData.toName}님</span>
-                    </div>
+                <div className="confirm-row">
+                    <span className="confirm-label">계좌번호</span>
+                    <span className="confirm-value font-mono">{formData.toAccount}</span>
+                </div>
 
-                    {/* 입금 계좌 */}
-                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <span style={{ color: '#666' }}>입금 은행/계좌</span>
-                        <span>
-                            {formData.toBank} {formData.toAccount}
-                        </span>
-                    </div>
+                <div className="confirm-row">
+                    <span className="confirm-label">예금주</span>
+                    <span className="confirm-value">{formData.toName}</span>
+                </div>
 
-                    {/* 출금 계좌 */}
-                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <span style={{ color: '#666' }}>출금 계좌</span>
-                        <span>
-                            {selectedAccount?.nickname || selectedAccount?.name || '내 계좌'} ({selectedAccount?.accountNo})
-                        </span>
-                    </div>
+                <div className="confirm-row">
+                    <span className="confirm-label">출금 계좌</span>
+                    <span className="confirm-value">
+                        {selectedAccount?.nickname || selectedAccount?.name} ({maskedAcc})
+                    </span>
+                </div>
 
-                    {/* 출금 후 예상 잔액 */}
-                    <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px solid #f0f0f0', paddingTop: '10px' }}>
-                        <span style={{ color: '#666' }}>이체 후 잔액</span>
-                        <span style={{ fontWeight: 'bold' }}>
-                            {balanceAfterTransfer.toLocaleString()}원
-                        </span>
-                    </div>
+                {/* 중간 점선 구분선 */}
+                <div className="confirm-divider" />
+
+                {/* 최종 이체 금액 */}
+                <div className="confirm-row total">
+                    <span className="confirm-label">이체 금액</span>
+                    <span className="confirm-value amount">
+                        {transferAmount.toLocaleString()}원
+                    </span>
                 </div>
             </div>
         </div>
-    )
-}
+    );
+};
 
-export default Step3Confirm
+export default Step3Confirm;
