@@ -2,6 +2,7 @@ import { useState } from 'react'
 import HomeScreen from './components/HomeScreen'
 import PhoneFrame from './layouts/PhoneFrame'
 import TransferFrame from './components/TransferScreen'
+import TransactionPage from './components/history/TransactionPage'
 
 const OUT_OF_SCOPE_MESSAGES = {
   product: '상품 화면은 이번 실습 범위 밖입니다',
@@ -28,12 +29,19 @@ function App() {
         <HomeScreen onQuickMenuSelect={handleAction} />
       )}
 
-      {/* 2. 이체 화면 (이체 완료 시 다시 홈 탭으로 복귀) */}
-      {activeTab === 'transfer' && (
-        <TransferFrame onFinishHome={() => setActiveTab('home')} />
+      {activeTab === 'history' && (
+        <TransactionPage />
       )}
+
+      {activeTab === 'transfer' && (
+        <TransferFrame
+          onFinishHome={() => setActiveTab('home')}
+        />
+      )}
+
+
     </PhoneFrame>
   )
 }
 
-export default App
+export default App;
