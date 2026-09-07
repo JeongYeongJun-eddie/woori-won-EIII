@@ -134,3 +134,88 @@ Settings → Branches → `main` 규칙
 
 - ☑ Require a pull request before merging
 - ☑ Require approvals (1개 이상)
+
+---
+
+# 협업 중 자주 쓰는 명령어
+
+## 하루 작업 시작할 때 (내 브랜치 최신화)
+
+```bash
+git checkout main
+git pull origin main              # main에 merge된 남의 작업 반영
+git checkout feature/home-screen
+git merge main                    # 내 작업 브랜치에도 최신 main 반영
+```
+
+## 새 브랜치 만들기 / 기존 브랜치로 이동
+
+```bash
+git checkout -b feature/새작업명    # 새로 만들면서 바로 이동
+git checkout feature/home-screen   # 이미 있는 브랜치로 이동
+```
+
+## 커밋하기
+
+```bash
+git status                        # 뭐가 바뀌었는지 확인
+git add .                         # 변경된 파일 전체 스테이징
+git add src/components/HomeScreen.jsx   # 특정 파일만
+git commit -m "feat: 홈 화면 계좌 카드 UI 추가"
+```
+
+## 푸시하기 (PR 보내기 전)
+
+```bash
+git push -u origin feature/home-screen     # 처음 푸시할 때
+git push origin feature/home-screen        # 그 이후
+```
+
+## PR 보내기
+
+터미널로는 이 링크가 뜨니 그대로 열면 됩니다.
+```bash
+git push origin feature/home-screen
+# → remote: Create a pull request for 'feature/home-screen' by visiting: ...
+```
+또는 GitHub 저장소 페이지 → Compare & pull request 버튼 클릭. base: `main`, compare: 본인 브랜치 확인.
+
+## 남의 PR이 main에 merge된 후, 내 브랜치로 가져오기
+
+```bash
+git checkout main
+git pull origin main               # 방금 merge된 내용 받기
+git checkout feature/transfer-screen
+git merge main                     # 내 작업 브랜치에 최신 main 합치기
+# 충돌 없으면 그대로 계속 작업, 있으면 아래 "충돌났을 때" 참고
+```
+
+## merge 완료된 브랜치 정리
+
+```bash
+git checkout main
+git pull origin main
+git branch -d feature/home-screen           # 로컬 브랜치 삭제
+git push origin --delete feature/home-screen # 원격 브랜치 삭제
+```
+
+## 충돌(conflict) 났을 때
+
+```bash
+git merge main
+# CONFLICT (content): Merge conflict in src/App.jsx 같은 메시지 뜸
+
+# 1. 충돌 파일 열어서 <<<<<<< / ======= / >>>>>>> 표시 부분 직접 수정
+# 2. 수정 완료 후
+git add src/App.jsx
+git commit                        # merge 커밋 완료
+git push origin feature/transfer-screen
+```
+
+## 자주 확인할 때
+
+```bash
+git log --oneline -5              # 최근 커밋 5개
+git branch -a                     # 로컬+원격 브랜치 전체 목록
+git diff                          # 아직 커밋 안 한 변경사항 확인
+```
