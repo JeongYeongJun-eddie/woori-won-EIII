@@ -10,7 +10,7 @@ export default function TransferPage({ onFinishHome }) {
 
   const [formData, setFormData] = useState({
     fromAccount: '',     // 출금 계좌
-    toBank: '',          // 받는 은행
+    toBank: '우리은행',          // 받는 은행
     toAccount: '',       // 받는 계좌번호
     toName: '',          // 예금주명
     amount: '',          // 이체 금액
