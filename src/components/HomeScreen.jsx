@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
+// [변경 1] 더미 데이터 대신 API 호출 함수를 import
+import { getAccounts, getTransactions } from '../constants/api'
 import './HomeScreen.css'
 
 function won(n) {
@@ -13,34 +15,48 @@ const QUICK_MENU_ITEMS = [
   { key: 'more', icon: '⋯', label: '전체' },
 ]
 
-// TODO: API 담당 팀원이 constants/api.js의 getAccounts/getTransactions로 교체 예정
-const DUMMY_ACCOUNTS = [
-  { id: 'acc1', nickname: '우리 첫급여통장', accountNo: '1002-***-123456', balance: 2384560, type: '입출금' },
-  { id: 'acc2', nickname: '우리 SUPER주거래통장', accountNo: '1002-***-789012', balance: 15200000, type: '저축예금' },
-  { id: 'acc3', nickname: '우리 청년도약계좌', accountNo: '1002-***-456789', balance: 5000000, type: '적금' },
-]
-
-const DUMMY_TRANSACTIONS = [
-  { id: 1, accountId: 'acc1', date: '2026-08-23', time: '09:12', desc: '스타벅스 강남점', type: 'out', amount: 5800, balanceAfter: 2384560, status: 'done' },
-  { id: 2, accountId: 'acc1', date: '2026-08-22', time: '14:05', desc: '월급', type: 'in', amount: 3200000, balanceAfter: 2390360, status: 'done' },
-  { id: 3, accountId: 'acc1', date: '2026-08-22', time: '11:40', desc: '이서연', type: 'out', amount: 30000, balanceAfter: -809640, status: 'done' },
-  { id: 4, accountId: 'acc2', date: '2026-08-21', time: '08:00', desc: '자동이체 - 적금', type: 'out', amount: 500000, balanceAfter: 15200000, status: 'done' },
-  { id: 5, accountId: 'acc3', date: '2026-08-20', time: '10:00', desc: '적금 자동납입', type: 'in', amount: 300000, balanceAfter: 5000000, status: 'done' },
-]
+// [변경 2] 기존 상단에 하드코딩되어 있던 DUMMY_ACCOUNTS, DUMMY_TRANSACTIONS 배열 제거
 
 function HomeScreen({ onQuickMenuSelect }) {
-  const [accounts] = useState(DUMMY_ACCOUNTS)
-  const [recentTransactions] = useState(
-    [...DUMMY_TRANSACTIONS].sort((a, b) => (b.date + b.time).localeCompare(a.date + a.time)).slice(0, 4)
-  )
+  // [변경 3] 더미 배열 대신 서버에서 받아올 빈 배열로 초기 State 선언
+  const [accounts, setAccounts] = useState([])
+  const [transactions, setTransactions] = useState([])
+  // [변경 4] 서버 통신 중/실패 시 상태 처리를 위한 loading, error State 추가
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
 
   const [masked, setMasked] = useState(false)
-
   const [expandedAccountId, setExpandedAccountId] = useState(null)
-
   const [selectedTxId, setSelectedTxId] = useState(null)
+
   const txTriggerRef = useRef(null)
   const sheetCloseBtnRef = useRef(null)
+
+  // [변경 5] 화면 마운트 시 백엔드 API(localhost:4000)에서 실시간 데이터 동시 호출
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        setLoading(true)
+        const [accountsData, transactionsData] = await Promise.all([
+          getAccounts(),
+          getTransactions(),
+        ])
+        setAccounts(accountsData)
+        setTransactions(transactionsData)
+      } catch (err) {
+        setError(err.message)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchData()
+  }, [])
+
+  // [변경 6] 더미 변수 대신 서버에서 받아온 transactions State 기준으로 최근 4건 추출
+  const recentTransactions = [...transactions]
+    .sort((a, b) => (b.date + b.time).localeCompare(a.date + a.time))
+    .slice(0, 4)
 
   function handleToggleAccount(accountId) {
     setExpandedAccountId((prev) => (prev === accountId ? null : accountId))
@@ -66,9 +82,28 @@ function HomeScreen({ onQuickMenuSelect }) {
     return () => document.removeEventListener('keydown', onKeyDown)
   }, [selectedTxId])
 
-  const selectedTx = selectedTxId !== null ? DUMMY_TRANSACTIONS.find((tx) => tx.id === selectedTxId) : null
-  const total = accounts.reduce((sum, a) => sum + a.balance, 0)
+  // [변경 7] DUMMY_TRANSACTIONS 대신 서버에서 받아온 transactions State에서 선택된 거래 탐색
+  const selectedTx = selectedTxId !== null ? transactions.find((tx) => tx.id === selectedTxId) : null
+  const total = accounts.reduce((sum, a) => sum + (Number(a.balance) || 0), 0)
 
+  // [변경 8] 서버 데이터 로딩 중 및 통신 에러 발생 시 안내 UI 분기
+  if (loading) {
+    return (
+      <main className="home-screen" style={{ padding: '40px 20px', textAlign: 'center', color: '#6b7280' }}>
+        <p>데이터를 불러오는 중입니다...</p>
+      </main>
+    )
+  }
+
+  if (error) {
+    return (
+      <main className="home-screen" style={{ padding: '40px 20px', textAlign: 'center', color: '#ef4444' }}>
+        <p>서버 연결 실패: {error}</p>
+      </main>
+    )
+  }
+
+  // 아래 UI 마크업, CSS 클래스, 인터랙션 구조는 팀장님 원본 그대로 유지됩니다.
   return (
     <main className="home-screen">
       <header className="greeting">
@@ -113,7 +148,8 @@ function HomeScreen({ onQuickMenuSelect }) {
         <ul className="account-list">
           {accounts.map((a) => {
             const isExpanded = expandedAccountId === a.id
-            const accountTx = DUMMY_TRANSACTIONS.filter((tx) => tx.accountId === a.id).slice(0, 3)
+            // [변경 9] DUMMY_TRANSACTIONS 대신 서버 transactions State에서 계좌별 거래내역 필터링
+            const accountTx = transactions.filter((tx) => tx.accountId === a.id).slice(0, 3)
             return (
               <li key={a.id} className="account-card-wrap">
                 <button
@@ -168,7 +204,7 @@ function HomeScreen({ onQuickMenuSelect }) {
               <button type="button" className="recent-item-btn" onClick={(e) => handleOpenTxDetail(tx.id, e)}>
                 <div className="left">
                   <p className="desc">{tx.desc}</p>
-                  <p className="meta">{tx.date.slice(5)}</p>
+                  <p className="meta">{tx.date?.slice(5)}</p>
                 </div>
                 <p className={`right ${tx.type === 'in' ? 'plus' : 'minus'}`}>
                   {tx.type === 'in' ? '+' : '-'}{won(tx.amount)}
@@ -223,3 +259,4 @@ function HomeScreen({ onQuickMenuSelect }) {
 }
 
 export default HomeScreen
+
