@@ -1,16 +1,65 @@
-# React + Vite
+# WON뱅킹 클론 코딩 실습 (woori-won-EIII)
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+우리 WON IT 아카데미의 **"WON뱅킹 실습 가이드"** 커리큘럼을 따라 진행하는 프론트엔드 팀 실습 프로젝트입니다. 제공받은 WON뱅킹 목업 화면(HTML)과 API 명세를 바탕으로, 화면 분석부터 테스트 작성까지 7단계를 거쳐 실제 동작하는 모바일 뱅킹 웹 앱을 처음부터 직접 구현하며 학습합니다.
 
-Currently, two official plugins are available:
+## 실습 자료
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+이 저장소를 시작하기 전에 다음 자료를 별도로 전달받았습니다.
 
-## React Compiler
+| 자료 | 설명 |
+|---|---|
+| `won-banking-mockup-api-connected.html` | 완성 목표가 되는 WON뱅킹 목업 화면 (정적 HTML) |
+| `won-banking-api-specification.html` | 연동해야 할 API 엔드포인트 명세 |
+| `won-banking-api/` | 위 명세를 그대로 구현한 Express.js 실습 API 서버 (별도 저장소, 인증 없음 · 인메모리 더미 데이터) |
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+목업과 API 명세를 기준으로 **이 저장소(`woori-won-EIII`)에 프론트엔드를 처음부터 새로 구현**하는 것이 이번 실습의 목표입니다.
 
-## Expanding the Oxlint configuration
+## 학습 목차 (7단계)
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+각 단계는 이전 단계의 결과물 위에 새 개념을 쌓는 구조로 진행합니다.
+
+| 단계 | 내용 |
+|---|---|
+| 01. 화면 분석 & 정적 마크업 구현 | WON뱅킹 목업 화면을 뜯어보고, 시맨틱 HTML + CSS로 정적으로 재현 |
+| 02. 바닐라 JS로 인터랙션 얹기 | 정적 화면에 순수 JS로 실제 동작(잔액 마스킹, 필터링 등)을 부여 |
+| 03. 컴포넌트 설계 & React 전환 | 화면을 컴포넌트 트리로 분해하고, props/state를 설계해 React로 이전 |
+| 04. 외부 API 연동 | 더미 데이터를 실제 Express API 호출로 교체하고, 로딩·에러 상태 처리 |
+| 05. AI 활용 구현 실습 | AI가 만든 코드에서 안티패턴을 찾아내고, 프롬프트 품질에 따른 결과 차이 비교 |
+| 06. 구현 코드 리뷰 & 리팩토링 | 의도적으로 심어둔 버그와 안티패턴을 리뷰 체크리스트로 찾아 수정 |
+| 07. 테스트 작성 | Vitest·RTL로 컴포넌트를, Supertest로 API를 테스트하며 실습 마무리 |
+
+모든 단계에서 다음 세 가지 AI 활용 원칙을 지킵니다.
+
+1. **먼저 스스로 설계한다** — AI에게 처음부터 다 만들어달라고 하지 않고, 구조·접근 방식을 직접 스케치한 뒤 검토·보완을 요청합니다.
+2. **왜 그런지 설명할 수 있어야 한다** — AI가 준 코드를 그대로 제출하지 않고, 동작 원리를 스스로 설명할 수 있는지 확인합니다.
+3. **검증은 직접 한다** — AI가 만든 결과가 요구사항대로 동작하는지, 배운 개념(불변성, key, 서버 검증 등)을 어기지 않았는지 직접 실행해 확인합니다.
+
+## 기술 스택
+
+- **프론트엔드**: React 19, Vite, Oxlint (이 저장소)
+- **백엔드**: Express.js, 인메모리 더미 데이터 (`won-banking-api`, 별도 저장소)
+
+## 시작하기
+
+### 1. 프론트엔드 실행
+
+```bash
+git clone https://github.com/JeongYeongJun-eddie/woori-won-EIII.git
+cd woori-won-EIII
+npm install
+npm run dev
+```
+
+### 2. 백엔드(API 서버) 함께 실행
+
+프론트와 별도로 `won-banking-api` 서버를 켜둬야 API 연동이 됩니다.
+
+```bash
+cd won-banking-api
+npm install
+npm start   # http://localhost:4000
+```
+
+## 폴더 구조와 협업 방식
+
+컴포넌트/CSS 배치 규칙, 브랜치 전략, 커밋 컨벤션, PR 규칙 등 팀 작업 가이드는 [CONTRIBUTING.md](./CONTRIBUTING.md)에 정리되어 있습니다.
