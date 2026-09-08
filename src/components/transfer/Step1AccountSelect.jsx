@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { API_ENDPOINTS } from '../../constants/api';
+import { lookupOwner } from '../../constants/api';
 
 const Step1AccountSelect = ({ formData, onChange, accountList = [], isLoading = false, onNext }) => {
   const [isVerifying, setIsVerifying] = useState(false);
@@ -27,19 +27,12 @@ const Step1AccountSelect = ({ formData, onChange, accountList = [], isLoading = 
         setIsVerifying(true);
         setVerifyError('');
 
-        const query = new URLSearchParams({
+        // 👈 raw fetch 대신 lookupOwner 호출 (API_BASE 자동 결합 및 JSON 파싱 완료)
+        const data = await lookupOwner({
           bank: toBank,
           accountNo: toAccount.trim(),
-        }).toString();
+        });
 
-        const res = await fetch(`${API_ENDPOINTS.LOOKUP}?${query}`);
-
-        if (!res.ok) {
-          const errorData = await res.json();
-          throw new Error(errorData.message || '계좌 정보를 확인할 수 없습니다');
-        }
-
-        const data = await res.json();
         onChange('toName', data.ownerName);
       } catch (error) {
         onChange('toName', '');
@@ -85,11 +78,11 @@ const Step1AccountSelect = ({ formData, onChange, accountList = [], isLoading = 
           value={formData.toBank}
           onChange={(e) => onChange('toBank', e.target.value)}
         >
-          <option value="우리은행">우리은행</option>
-          <option value="국민은행">국민은행</option>
-          <option value="신한은행">신한은행</option>
-          <option value="하나은행">하나은행</option>
-          <option value="카카오뱅크">카카오뱅크</option>
+          <option value="WOORI">우리은행</option>
+          <option value="KOOKMIN">국민은행</option>
+          <option value="SHINHAN">신한은행</option>
+          <option value="HANA">하나은행</option>
+          <option value="KAKAO">카카오뱅크</option>
         </select>
       </div>
 
