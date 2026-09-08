@@ -4,7 +4,7 @@ import Step2AmountInput from "./transfer/Step2AmountInput";
 import Step3Confirm from "./transfer/Step3Confirm";
 import Step4Result from "./transfer/Step4Result";
 import TransferBottomNav from "./transfer/TransferBottomNav";
-import { API_ENDPOINTS } from '../constants/api';
+import { getAccounts, transfer } from '../constants/api';
 import './transfer/TransferScreen.css'; // 👈 한 번만 import
 
 export default function TransferFrame({ onFinishHome }) {
@@ -22,7 +22,7 @@ export default function TransferFrame({ onFinishHome }) {
     // 4. 이체 프로세스 전체를 관통하는 단일 진실 공급원(Single Source of Truth)
     const [formData, setFormData] = useState({
         fromAccount: '',     // 출금 계좌 ID
-        toBank: '우리은행',   // 받는 은행
+        toBank: 'WOORI',   // 받는 은행
         toAccount: '',       // 받는 계좌번호
         toName: '',          // 예금주명
         amount: '',          // 이체 금액
@@ -33,13 +33,11 @@ export default function TransferFrame({ onFinishHome }) {
         const fetchAccounts = async () => {
             try {
                 setIsAccountsLoading(true);
-                const res = await fetch(API_ENDPOINTS.ACCOUNTS);
-                if (!res.ok) throw new Error('계좌 목록 조회 실패');
-                const data = await res.json();
+                // getAccounts()가 이미 data를 바로 반환함
+                const data = await getAccounts();
                 setAccountList(data);
 
-                // 목록이 존재하면 첫 번째 계좌를 기본 출금 계좌로 자동 선택
-                if (data.length > 0) {
+                if (data && data.length > 0) {
                     setFormData((prev) => ({ ...prev, fromAccount: data[0].id }));
                 }
             } catch (error) {
@@ -67,10 +65,10 @@ export default function TransferFrame({ onFinishHome }) {
 
     // 최종 이체 실행 요청
     const handleTransferSubmit = async () => {
+        if (isSubmitting) return; // 중복 요청 차단 가드
         try {
             setIsSubmitting(true);
 
-            // 백엔드 명세에 맞춰 Payload 조립
             const payload = {
                 fromAccountId: formData.fromAccount,
                 toBank: formData.toBank,
@@ -79,19 +77,9 @@ export default function TransferFrame({ onFinishHome }) {
                 amount: Number(formData.amount),
             };
 
-            const res = await fetch(API_ENDPOINTS.TRANSFERS, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload),
-            });
+            // transfer()가 파싱된 결과 객체를 바로 반환 (에러 발생 시 catch로 즉시 이동)
+            const data = await transfer(payload);
 
-            if (!res.ok) {
-                const errorData = await res.json();
-                throw new Error(errorData.message || '이체 처리에 실패했습니다.');
-            }
-
-            // 서버 응답 데이터({ transaction, account }) 저장 후 완료 화면(Step 4)으로 이동
-            const data = await res.json();
             setTransferResult(data);
             setStep(4); // 성공 시 4단계로 이동
         } catch (error) {
