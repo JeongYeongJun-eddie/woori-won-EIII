@@ -1,16 +1,76 @@
-# React + Vite
+# WON뱅킹 실습 · Team 01
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+우리WON뱅킹의 홈 / 이체 / 거래내역 화면을 7단계로 구현한 팀 실습 결과물입니다.
 
-Currently, two official plugins are available:
+## 팀원 및 역할
+| 이름 | GitHub | 담당 |
+|---|---|---|
+| 김초현 | @chohyeonK | 이체 |
+| 서현진 | @Seo0101 | 거래내역 |
+| 이서현 | @2seo8 | 홈(총 자산, 내 계좌, 최근 거래 api 연동) |
+| 정형준 | @Eddie | Github/project 셋팅, 홈 레이아웃 |
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 실행 방법
+```bash
+# 1. 서버
+cd server && npm install && npm start     # http://localhost:4000
 
-## React Compiler
+# 2. 클라이언트 (새 터미널)
+cd woori-won-EIII && npm install
+npm run dev                               # http://localhost:5173
+```
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 구현 범위
+- [ ] STEP 01 화면 분석 & 정적 마크업
+- [ ] STEP 02 바닐라 JS 인터랙션
+- [x] STEP 03 컴포넌트 설계 & React 전환
+- [x] STEP 04 외부 API 연동
+- [x] STEP 05 AI 활용 구현 실습
+- [x] STEP 06 코드리뷰 & 리팩토링
+- [ ] STEP 07 테스트
 
-## Expanding the Oxlint configuration
+### 브랜치 전략
+- **기본 브랜치**: `main` (직접 push 금지, PR 승인 후 병합)
+- **작업 브랜치 네이밍 규칙**: `prefix/feature-name`
+  - 기능 개발: `feature/home-screen`, `feature/transfer-screen`, `feature/history-screen`
+- main 직접 push 금지, PR + 1인 승인 후 Squash merge
+- 총 PR 15개 / 리뷰 코멘트 34건
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+## 우리가 겪은 문제와 해결
+1. **홈 화면에서 계좌 클릭 시 상세/이체 네비게이션 미동작 문제**
+   - 원인: 홈 화면의 계좌 아이템 탭 이벤트 처리 시 라우터/상태 핸들러로 계좌 식별자(`accountId`)가 제대로 전달되지 않아 화면 전환이 차단됨
+   - 해결: 이벤트 버블링 방지 및 선택된 계좌 데이터를 콜백 함수에 정확히 바인딩하도록 수정 (PR #13)
+
+2. **이체 폼 단계별 유효성 검증 시 버튼 비활성화 해제 지연**
+   - 원인: 계좌번호 입력 후 디바운스(Debounce)를 거쳐 예금주 조회 API가 완료되기 전에 폼 유효성(`isValid`) 검증 로직이 먼저 평가되어 다음 단계 버튼이 `disabled` 상태로 유지됨
+   - 해결: 예금주 확인 상태와 필수 입력값들의 동기화 여부를 체크하는 상태 분기를 보강하여 API 응답 직후 즉각 버튼이 활성화되도록 개선 (PR #12)
+
+3. **이체 요청 시 백엔드 API 명세와 요청 페이로드 불일치**
+   - 원인: UI 컴포넌트 내부의 은행 선택 데이터는 한글 명칭("우리은행")으로 다루었으나, API 연동 시 서버 스펙 규약인 영문 은행 코드("WOORI")와 필드 키 매핑이 누락됨
+   - 해결: API 전송 직전 폼 데이터를 백엔드 DTO 규약에 맞게 변환하는 매핑 레이어를 추가해 페이로드 정합성 확보 (PR #12)
+  
+4. **로컬 작업 커밋 후 main 브랜치 pull 시 최신 코드 미반영 및 히스토리 꼬임 현상**
+   - 원인: 내 작업 브랜치(`feature/home-screen`)에 로컬 커밋이 존재하는 상태에서 `git pull origin main`을 실행했으나, 원격 `main`의 최신 변경사항(`api.js` 공용 엔드포인트 등)이 로컬 작업물에 제대로 갱신되지 않고 커밋 이력이 꼬여 최신 코드가 정상적으로 반영되지 않음
+   - 해결: 코드 충돌과 히스토리 왜곡을 방지하기 위해 꼬여 있던 직전 로컬 커밋을 취소(되돌리기)한 후, 원격 `origin/main`의 최신 커밋 상태를 기준으로 다시 안전하게 `git pull`을 수행하여 최신 main 코드와 내 브랜치를 깔끔하게 동기화 완료
+
+5. **모달창 크기 불일치 문제**
+  - 원인: 거래 상세 모달에 position: fixed와 고정 크기 적용으로 휴대폰 프레임 밖으로 모달이 튀어나오는 문제 발생.
+  - 해결: position: absolute와 inset: 0을 적용해 부모 앱 영역을 기준으로 모달 크기 조정. 별도의 width, height 하드코딩 없이 휴대폰 프레임 내부에 맞게 표시되도록 개선 완료.
+
+## AI 활용 기록
+- 사용 도구: ChatGPT, Claude, Gemini
+- 주로 쓴 방식:
+  - 3대 화면(홈, 이체, 거래내역) 컴포넌트 구조 분리 및 상태 관리 설계 검토
+  - 터미널 런타임 에러 로그와 화면 캡처 기반 즉각적인 원인 분석 및 해결책 도출
+  - 복잡한 비동기 API 연동 플로우(계좌 목록 조회, 예금주 실시간 조회, 이체 요청) 로직 검증
+  - 불변성 유지, 의존성 배열 누락 등 리액트 렌더링 이슈 및 상태 동기화 버그 디버깅
+  - 로컬 커밋과 원격 main 브랜치 동기화 중 발생한 Git 히스토리 꼬임 원인 규명 및 작업 코드 손실 없는 안전한 커밋 롤백·재동기화 가이드 도출
+- 검증 방법:
+  - AI가 제안한 코드와 해결책을 로컬 환경에 직접 적용 후 UI 렌더링 및 콘솔 로그로 데이터 흐름 확인
+  - 사용자 시나리오(인풋 입력, 유효성 검사, 화면 전환)를 브라우저에서 단계별로 직접 조작하며 동작 검증
+  - 정상 동작이 확인된 코드만 브랜치 컨벤션에 맞춰 커밋하고 PR에 변경 사유 및 테스트 내역 기재
+
+## 알려진 한계
+- **테스트 코드 작성 진행 중 (미완료)**: 핵심 컴포넌트(이체 플로우 등)의 통합 테스트 환경 세팅 및 검증은 일부 진행했으나, 전체 컴포넌트 및 백엔드 API 모킹 테스트 범위는 완전히 구축되지 않음 (추후 확장 예정)
+- **제한된 뷰포트 지원**: 모바일 전용 UI(기준 폭 390px) 중심으로 설계 및 검증되어 태블릿 및 PC 해상도 반응형 미대응
+- **백엔드 예외 처리 한계**: 네트워크 지연, 서버 에러 등 다양한 HTTP 비정상 응답에 대한 공통 에러 핸들링 및 사용자 피드백 처리 고도화 필요
