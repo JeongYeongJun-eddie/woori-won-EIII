@@ -161,30 +161,6 @@
   white-space: nowrap;
 }
 
-.account-detail {
-  margin-top: 4px;
-  padding: 10px 16px;
-  background: #f5f7f9;
-  border-radius: 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.account-detail-row {
-  display: flex;
-  justify-content: space-between;
-  font-size: 13px;
-}
-
-.account-detail-row .plus {
-  color: #14875a;
-}
-
-.account-detail-row .minus {
-  color: #e8483a;
-}
-
 .account-card .nickname,
 .recent-item .desc {
   margin: 0 0 2px;
