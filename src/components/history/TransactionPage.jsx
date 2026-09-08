@@ -23,6 +23,7 @@ const TransactionPage = () => {
 
   // 계좌 목록 조회
   useEffect(() => {
+
     fetch(`${API_URL}/accounts`)
       .then(response => {
         if (!response.ok) {
