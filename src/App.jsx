@@ -13,24 +13,33 @@ const OUT_OF_SCOPE_MESSAGES = {
 function App() {
   const [activeTab, setActiveTab] = useState('home')
   const [toast, setToast] = useState(null)
+  const [selectedAccountId, setSelectedAccountId] = useState('')
 
   function handleAction(key) {
     const message = OUT_OF_SCOPE_MESSAGES[key]
     if (message) {
       setToast({ id: Date.now(), message })
     } else {
+      if (key === 'history') {
+        setSelectedAccountId('')
+      }
       setActiveTab(key)
     }
+  }
+
+  function handleAccountSelect(accountId) {
+    setSelectedAccountId(accountId)
+    setActiveTab('history')
   }
 
   return (
     <PhoneFrame activeTab={activeTab} onNavigate={handleAction} toast={toast}>
       {activeTab === 'home' && (
-        <HomeScreen onQuickMenuSelect={handleAction} />
+        <HomeScreen onQuickMenuSelect={handleAction} onAccountSelect={handleAccountSelect} />
       )}
 
       {activeTab === 'history' && (
-        <TransactionPage />
+        <TransactionPage initialAccountId={selectedAccountId} />
       )}
 
       {activeTab === 'transfer' && (

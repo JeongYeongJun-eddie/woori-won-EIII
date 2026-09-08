@@ -8,15 +8,15 @@ import "./TransactionPage.css";
 
 const API_URL = "http://localhost:4000/api";
 
-const TransactionPage = () => {
+const TransactionPage = ({ initialAccountId = "" }) => {
   // 계좌 목록
   const [accounts, setAccounts] = useState([]);
 
   // 거래내역 목록
   const [transactions, setTransactions] = useState([]);
 
-  // 선택된 계좌
-  const [selectedAccountId, setSelectedAccountId] = useState("");
+  // 선택된 계좌 (홈 화면에서 특정 계좌를 눌러 진입한 경우 해당 계좌로 초기 선택)
+  const [selectedAccountId, setSelectedAccountId] = useState(initialAccountId);
 
   // 선택된 거래 종류
   const [selectedType, setSelectedType] = useState("");

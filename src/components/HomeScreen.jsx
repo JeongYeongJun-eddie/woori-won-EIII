@@ -17,7 +17,7 @@ const QUICK_MENU_ITEMS = [
 
 // [변경 2] 기존 상단에 하드코딩되어 있던 DUMMY_ACCOUNTS, DUMMY_TRANSACTIONS 배열 제거
 
-function HomeScreen({ onQuickMenuSelect }) {
+function HomeScreen({ onQuickMenuSelect, onAccountSelect }) {
   // [변경 3] 더미 배열 대신 서버에서 받아올 빈 배열로 초기 State 선언
   const [accounts, setAccounts] = useState([])
   const [transactions, setTransactions] = useState([])
@@ -26,7 +26,6 @@ function HomeScreen({ onQuickMenuSelect }) {
   const [error, setError] = useState(null)
 
   const [masked, setMasked] = useState(false)
-  const [expandedAccountId, setExpandedAccountId] = useState(null)
   const [selectedTxId, setSelectedTxId] = useState(null)
 
   const txTriggerRef = useRef(null)
@@ -57,10 +56,6 @@ function HomeScreen({ onQuickMenuSelect }) {
   const recentTransactions = [...transactions]
     .sort((a, b) => (b.date + b.time).localeCompare(a.date + a.time))
     .slice(0, 4)
-
-  function handleToggleAccount(accountId) {
-    setExpandedAccountId((prev) => (prev === accountId ? null : accountId))
-  }
 
   function handleOpenTxDetail(txId, event) {
     txTriggerRef.current = event.currentTarget
@@ -146,47 +141,24 @@ function HomeScreen({ onQuickMenuSelect }) {
           <span className="more">전체보기</span>
         </div>
         <ul className="account-list">
-          {accounts.map((a) => {
-            const isExpanded = expandedAccountId === a.id
-            // [변경 9] DUMMY_TRANSACTIONS 대신 서버 transactions State에서 계좌별 거래내역 필터링
-            const accountTx = transactions.filter((tx) => tx.accountId === a.id).slice(0, 3)
-            return (
-              <li key={a.id} className="account-card-wrap">
-                <button
-                  type="button"
-                  className="account-card"
-                  onClick={() => handleToggleAccount(a.id)}
-                  aria-expanded={isExpanded}
-                  aria-controls={`account-detail-${a.id}`}
-                >
-                  <div className="left">
-                    <p className="nickname">{a.nickname}</p>
-                    <p className="accno">{a.accountNo}</p>
-                  </div>
-                  <div className="right">
-                    <p className="balance">{masked ? '••••••' : won(a.balance)}</p>
-                    <p className="type">{a.type}</p>
-                  </div>
-                </button>
-
-                {isExpanded && (
-                  <div className="account-detail" id={`account-detail-${a.id}`}>
-                    {accountTx.length === 0 && (
-                      <p className="state-message">최근 거래내역이 없습니다</p>
-                    )}
-                    {accountTx.map((tx) => (
-                      <div key={tx.id} className="account-detail-row">
-                        <span>{tx.desc}</span>
-                        <span className={tx.type === 'in' ? 'plus' : 'minus'}>
-                          {tx.type === 'in' ? '+' : '-'}{won(tx.amount)}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </li>
-            )
-          })}
+          {accounts.map((a) => (
+            <li key={a.id} className="account-card-wrap">
+              <button
+                type="button"
+                className="account-card"
+                onClick={() => onAccountSelect?.(a.id)}
+              >
+                <div className="left">
+                  <p className="nickname">{a.nickname}</p>
+                  <p className="accno">{a.accountNo}</p>
+                </div>
+                <div className="right">
+                  <p className="balance">{masked ? '••••••' : won(a.balance)}</p>
+                  <p className="type">{a.type}</p>
+                </div>
+              </button>
+            </li>
+          ))}
         </ul>
       </section>
 
