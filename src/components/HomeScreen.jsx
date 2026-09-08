@@ -138,7 +138,13 @@ function HomeScreen({ onQuickMenuSelect, onAccountSelect }) {
       <section aria-labelledby="account-heading">
         <div className="section-head">
           <h3 id="account-heading">내 계좌</h3>
-          <span className="more">전체보기</span>
+
+          <span
+            className="more"
+            onClick={() => onQuickMenuSelect?.('history')}
+          >
+            전체보기
+          </span>
         </div>
         <ul className="account-list">
           {accounts.map((a) => (
@@ -165,7 +171,12 @@ function HomeScreen({ onQuickMenuSelect, onAccountSelect }) {
       <section aria-labelledby="recent-heading">
         <div className="section-head">
           <h3 id="recent-heading">최근 거래</h3>
-          <span className="more">전체보기</span>
+          <span
+            className="more"
+            onClick={() => onQuickMenuSelect?.('history')}
+          >
+            전체보기
+          </span>
         </div>
         <ul className="recent-list">
           {recentTransactions.length === 0 && (
